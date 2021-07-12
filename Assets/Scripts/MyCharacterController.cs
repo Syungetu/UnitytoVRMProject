@@ -13,6 +13,8 @@ public class MyCharacterController : MonoBehaviour
     public CharacterController _CharacterController;
     /// <summary> アニメーションを管理するコントローラー </summary>
     public ModelAnimatorController _ModelAnimatorController;
+    /// <summary> カメラオブジェクト </summary>
+    public GameObject _CameraObject;
     /// <summary> 移動速度 </summary>
     public float _MoveVelocity = 2.0f;
     /// <summary> ジャンプするときの上向きの力 </summary>
@@ -69,6 +71,13 @@ public class MyCharacterController : MonoBehaviour
 
         // キー入力に合わせて移動方向をセットする（-１～１）
         Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+        if (_CameraObject != null)
+        {
+            // カメラ向きに移動の向きを合わせる
+            direction = (Input.GetAxis("Vertical") * _CameraObject.transform.forward) +
+                (Input.GetAxis("Horizontal") * _CameraObject.transform.right);
+        }
+
         // 移動モーションを設定する
         float animSpeed = Mathf.Max(Mathf.Abs(Input.GetAxis("Horizontal")), Mathf.Abs(Input.GetAxis("Vertical")));
         if (animSpeed > 0.0f)
