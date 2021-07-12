@@ -71,10 +71,12 @@ public class MyCharacterController : MonoBehaviour
 
         // キー入力に合わせて移動方向をセットする（-１～１）
         Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
-        if (_CameraObject != null)
+
+        // カメラオブジェクトが指定されていたときに処理をする
+        if(_CameraObject != null)
         {
-            // カメラ向きに移動の向きを合わせる
-            direction = (Input.GetAxis("Vertical") * _CameraObject.transform.forward) +
+            // カメラの向きに合わせて移動方向を設定する
+            direction = (Input.GetAxis("Vertical") * _CameraObject.transform.forward) + 
                 (Input.GetAxis("Horizontal") * _CameraObject.transform.right);
         }
 
@@ -116,14 +118,21 @@ public class MyCharacterController : MonoBehaviour
 
         if (_CharacterController.velocity.magnitude > 0.0f)
         {
-            // 移動中なら移動先にオブジェクトを回転させる(Y軸の方向に対して有効にする)
-            _MainObject.transform.rotation = Quaternion.Slerp(
-                _MainObject.transform.rotation,
-                Quaternion.LookRotation(new Vector3(
+            Quaternion targetRot = _MainObject.transform.rotation;
+            // 移動していない
+            if (_CharacterController.velocity.x != 0.0f || _CharacterController.velocity.z != 0.0f)
+            {
+                targetRot = Quaternion.LookRotation(new Vector3(
                     _CharacterController.velocity.x,
                     0.0f,
                     _CharacterController.velocity.z
-                )),
+                ));
+            }
+
+            // 移動中なら移動先にオブジェクトを回転させる(Y軸の方向に対して有効にする)
+            _MainObject.transform.rotation = Quaternion.Slerp(
+                _MainObject.transform.rotation,
+                targetRot,
                 _RotVelocity
             );
         }
