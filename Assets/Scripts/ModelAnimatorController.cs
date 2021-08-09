@@ -9,13 +9,15 @@ public class ModelAnimatorController : MonoBehaviour
 {
     /// <summary> モデルのAnimator </summary>
     public Animator _ModelAnimator;
+    /// <summary> 初期時に再生するアニメーション名 </summary>
+    public string _InitAnimatorName = "Idle001";
 
     /// <summary>
     /// 初期処理
     /// </summary>
     void Start()
     {
-        SetChangeAnimator("Idle001");
+        SetChangeAnimator(_InitAnimatorName);
     }
 
     /// <summary>
