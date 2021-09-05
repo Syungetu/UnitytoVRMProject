@@ -31,6 +31,9 @@ public class MyCharacterController : MonoBehaviour
     /// <summary> 現在のジャンプ力 </summary>
     private float _JumpNowPower = 0.0f;
 
+    /// <summary> 特殊Motionフラグ </summary>
+    private bool _IsSpecialMotion = false;
+
     /// <summary>
     /// 初期処理
     /// </summary>
@@ -38,6 +41,7 @@ public class MyCharacterController : MonoBehaviour
     {
         _IsMoveStart = false;
         _IsJumpStart = false;
+        _IsSpecialMotion = false;
         _JumpNowPower = 0.0f;
     }
 
@@ -67,6 +71,13 @@ public class MyCharacterController : MonoBehaviour
                 //地面に埋まらないように
                 _JumpNowPower = 0.0f;
             }
+        }
+
+        // 特殊モーション
+        if(_IsSpecialMotion == true)
+        {
+            _ModelAnimatorController.SetChangeAnimator("jackochallange");
+            return;
         }
 
         // キー入力に合わせて移動方向をセットする（-１～１）
@@ -137,6 +148,14 @@ public class MyCharacterController : MonoBehaviour
             );
         }
 
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void SetSpecialMotion()
+    {
+        _IsSpecialMotion = !_IsSpecialMotion;
     }
 
 }
