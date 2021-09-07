@@ -23,15 +23,16 @@ public class RagdollController : MonoBehaviour
     public bool _IsRagdoll = false;
 
     /// <summary> ラグドールフラグバッファ </summary>
-    private bool _BuffIsRagdoll = false;
+    private bool _BuffIsRagdoll = true;
 
     /// <summary>
     /// 初期処理
     /// </summary>
     void Start()
     {
+        // 起動時にはラグドール化をキャンセルできるように設定
         _IsRagdoll = false;
-        _BuffIsRagdoll = false;
+        _BuffIsRagdoll = true;
     }
 
     /// <summary>

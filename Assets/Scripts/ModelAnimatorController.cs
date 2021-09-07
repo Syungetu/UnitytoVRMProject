@@ -47,6 +47,24 @@ public class ModelAnimatorController : MonoBehaviour
     }
 
     /// <summary>
+    /// アニメーションを変更して最初から再生するする
+    /// </summary>
+    /// <param name="value"> アニメーション名 </param>
+    /// <param name="layer"> アニメーションのあるレイヤー番号（0～）  </param>
+    public void SetChangeStartAnimator(string value, int layer = 0)
+    {
+        if (_ModelAnimator == null)
+        {
+            return;
+        }
+        if (_ModelAnimator.layerCount >= layer)
+        {
+            // アニメーションを切り替える
+            _ModelAnimator.Play(value, layer, 0.0f);
+        }
+    }
+
+    /// <summary>
     /// モーションブレンドの強さを変更する
     /// </summary>
     /// <param name="value">ブレンドする変数名</param>
