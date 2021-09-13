@@ -37,7 +37,7 @@ public class HitAttackController : MonoBehaviour
     /// 接触判定ありの接触開始の当たり判定
     /// </summary>
     /// <param name="other"></param>
-    void OnCollisionStay(Collision other)
+    void OnCollisionEnter(Collision other)
     {
         if(_CallAttackHitFunction != null)
         {
