@@ -20,6 +20,8 @@ public class MyCameraController : MonoBehaviour
     public float _CameraAngleVelocity = 90.0f;
     /// <summary> カメラの調整高さ </summary>
     public float _CameraAdjustmentHeight = 1.5f;
+    /// <summary> カメラが対象に近づくことを許可するかどうか </summary>
+    public bool _IsAllowApproach = false;
 
     /// <summary>
     /// 初期処理
@@ -64,7 +66,7 @@ public class MyCameraController : MonoBehaviour
         }
 
         // 指定した距離より近かった場合は移動処理をさせない
-        if(_CameraDistance > dis)
+        if(_IsAllowApproach == true && _CameraDistance > dis)
         {
             return;
         }
