@@ -13,7 +13,7 @@ public class MyCameraController : MonoBehaviour
     /// <summary> 中心になるプレイヤーオブジェクト </summary>
     public GameObject _PlayerObject;
     /// <summary> プレイヤーとカメラの距離 </summary>
-    public float _CameraDistance = 5.0f;
+    public float _CameraDistance = 3.5f;
     /// <summary> カメラの移動速度 </summary>
     public float _CameraMoveVelocity = 0.2f;
     /// <summary> カメラの回転速度（デグリー：0～360） </summary>

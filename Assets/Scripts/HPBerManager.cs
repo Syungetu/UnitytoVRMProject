@@ -27,7 +27,7 @@ public class HPBerManager : MonoBehaviour
             _HPBarSlider.value = _CharacterStatusManager._HP;
             _HPBarSlider.minValue = 0.0f;
             _HPBarSlider.maxValue = _CharacterStatusManager._Max_HP;
-            _HPValueText.text = "HP : " + _CharacterStatusManager._HP.ToString();
+            _HPValueText.text = "HP : " + _CharacterStatusManager._HP.ToString() + " / " + _CharacterStatusManager._Max_HP.ToString();
         }
     }
 
@@ -39,7 +39,7 @@ public class HPBerManager : MonoBehaviour
         if (_CharacterStatusManager != null)
         {
             _HPBarSlider.value = _CharacterStatusManager._HP;
-            _HPValueText.text = "HP : " + _CharacterStatusManager._HP.ToString();
+            _HPValueText.text = "HP : " + _CharacterStatusManager._HP.ToString() + "/" + _CharacterStatusManager._Max_HP.ToString();
         }
     }
 }

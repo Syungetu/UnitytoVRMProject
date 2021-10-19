@@ -16,6 +16,10 @@ public class AnimationFunctionCallController : MonoBehaviour
     [SerializeField]
     public UnityEvent _CallEndAnimationFunction = null;
 
+    /// <summary> ジャンプ開始と終了に呼び出す関数 </summary>
+    [SerializeField]
+    public UnityEvent _CallStartEndJumpAnimationFunction = null;
+
     /// <summary>
     /// 初期処理
     /// </summary>
@@ -56,4 +60,18 @@ public class AnimationFunctionCallController : MonoBehaviour
         }
         Debug.Log("アニメーションの再生を終了");
     }
+
+    /// <summary>
+    /// ジャンプのアニメーション開始と開始時に呼ばれる関数
+    /// </summary>
+    public void CallStartEndJumpAnimation()
+    {
+        if (_CallStartEndJumpAnimationFunction != null)
+        {
+            _CallStartEndJumpAnimationFunction.Invoke();
+        }
+
+        Debug.Log("ジャンプアニメーションの再生を開始");
+    }
+
 }

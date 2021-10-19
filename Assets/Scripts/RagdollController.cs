@@ -13,6 +13,10 @@ public class RagdollController : MonoBehaviour
     public Rigidbody _MainRigidbody;
     /// <summary> メインで使っているコライダー </summary>
     public BoxCollider _MainBoxCollider;
+    /// <summary> メインで使っているコライダー </summary>
+    public MeshCollider _MainMeshCollider;
+    /// <summary> メインで使っているコライダー </summary>
+    public CapsuleCollider _MainCapsuleCollider;
     /// <summary> モデルのボーンルートオブジェクト </summary>
     public GameObject _ModelBoonRootObject;
     /// <summary> モデルのAnimator </summary>
@@ -96,6 +100,16 @@ public class RagdollController : MonoBehaviour
             // メインの当たり判定を切っておく（ダメージ用とか）
             _MainBoxCollider.enabled = false;
         }
+        if(_MainMeshCollider != null)
+        {
+            // メインの当たり判定を切っておく（ダメージ用とか）
+            _MainMeshCollider.enabled = false;
+        }
+        if (_MainCapsuleCollider != null)
+        {
+            // メインの当たり判定を切っておく（ダメージ用とか）
+            _MainCapsuleCollider.enabled = false;
+        }
 
         // 1フレーム待つ
         yield return null;
@@ -152,7 +166,17 @@ public class RagdollController : MonoBehaviour
         if(_MainBoxCollider != null)
         {
             // メインの当たり判定を戻しておく
-            _MainBoxCollider.enabled = false;
+            _MainBoxCollider.enabled = true;
+        }
+        if (_MainMeshCollider != null)
+        {
+            // メインの当たり判定を切っておく（ダメージ用とか）
+            _MainMeshCollider.enabled = true;
+        }
+        if (_MainCapsuleCollider != null)
+        {
+            // メインの当たり判定を切っておく（ダメージ用とか）
+            _MainCapsuleCollider.enabled = true;
         }
 
     }

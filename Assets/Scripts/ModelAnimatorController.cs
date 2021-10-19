@@ -43,6 +43,7 @@ public class ModelAnimatorController : MonoBehaviour
         {
             // アニメーションを切り替える
             _ModelAnimator.Play(value, layer);
+            _ModelAnimator.speed = 1.0f;
         }
     }
 
@@ -61,6 +62,7 @@ public class ModelAnimatorController : MonoBehaviour
         {
             // アニメーションを切り替える
             _ModelAnimator.Play(value, layer, 0.0f);
+            _ModelAnimator.speed = 1.0f;
         }
     }
 
@@ -95,6 +97,18 @@ public class ModelAnimatorController : MonoBehaviour
         {
             _ModelAnimator.SetLayerWeight(layer, weight);
         }
+    }
+
+    /// <summary>
+    /// アニメーションを止める
+    /// </summary>
+    public void SetStopAnimator()
+    {
+        if (_ModelAnimator == null)
+        {
+            return;
+        }
+        _ModelAnimator.speed = 0.0f;
     }
 
     /// <summary>

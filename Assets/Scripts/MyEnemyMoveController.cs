@@ -8,6 +8,8 @@ using UnityEngine.AI;
 /// </summary>
 public class MyEnemyMoveController : MonoBehaviour
 {
+    /// <summary> キャラクターオブジェクトで使用する処理を纏めたもの </summary>
+    public MyCharacterBundledProcessManager _MyCharacterBundledProcessManager;
     /// <summary> 動かす敵オブジェクト </summary>
     public GameObject _ModelObject;
     /// <summary> 敵を動かすナビメッシュエージェント </summary>
@@ -41,8 +43,8 @@ public class MyEnemyMoveController : MonoBehaviour
     /// </summary>
     void Start()
     {
-        // 念の為にモーションを設定しておく
-        _ModelAnimatorController.SetChangeAnimator("Blend Tree");
+        // 復活処理でデータを初期化する
+        SetEnemyReturn();
 
         // 初期位置に戻っているかどうか
         _IsReturnToInitialPosition = false;
@@ -55,7 +57,48 @@ public class MyEnemyMoveController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(_TargetObject != null)
+        bool isMove = true;
+
+        // ゲームオーバー
+        if (MainSceneManager.CallIsGameOver == true)
+        {
+            return;
+        }
+
+        if (_MyCharacterBundledProcessManager != null)
+        {
+            // 何らかの要因で移動出来ない
+            if (_MyCharacterBundledProcessManager.GetIsMove() == false)
+            {
+                isMove = false;
+            }
+
+            // 体力がなかった場合移動処理をしないようにする
+            if (_MyCharacterBundledProcessManager.GetIsDown() == true)
+            {
+                // やられた時の処理
+                _ModelAnimatorController.SetStopAnimator();
+                _MyCharacterBundledProcessManager._RagdollController._IsRagdoll = true;
+
+                // やられた時の時間をカウントする
+                _MyCharacterBundledProcessManager._CharacterStatusManager._ReturnTimeCount -= Time.deltaTime;
+
+                if(_MyCharacterBundledProcessManager._CharacterStatusManager._ReturnTimeCount <= 0.0f)
+                {
+                    // 復帰処理
+                    SetEnemyReturn();
+                }
+                isMove = false;
+                return;
+            }
+            else
+            {
+                // 通常処理
+                _MyCharacterBundledProcessManager._CharacterStatusManager._ReturnTimeCount = _MyCharacterBundledProcessManager._CharacterStatusManager._RespawningTimes;
+            }
+        }
+
+        if (_TargetObject != null)
         {
             // オブジェクト指定だった場合、そちらの座標を取得する
             _TargetVector3 = _TargetObject.transform.position;
@@ -136,20 +179,95 @@ public class MyEnemyMoveController : MonoBehaviour
                 _RotVelocity
             );
         }
+        // 移動処理をさせない
+        if (isMove == false)
+        {
+            _Agent.nextPosition = _ModelObject.transform.position;
+            return;
+        }
+        else
+        {
+            // ナビメッシュの移動をメインのオブジェクトに反映させる
+            if (_Rigidbody != null)
+            {
+                // 物理演算を含めた移動
+                _Rigidbody.velocity = new Vector3(_Agent.velocity.x, _Rigidbody.velocity.y, _Agent.velocity.z);
+                //_Agent.nextPosition = _ModelObject.transform.position;
+            }
+            else
+            {
+                // 座標を直接変更
+                _ModelObject.transform.position = _Agent.transform.position;
+            }
+        }
+
+        // スピードからアニメーションのブレンド率を決める
+        _ModelAnimatorController.SetMotionBlendValue("WalkAndRunSpeed", _Agent.velocity.magnitude / _Agent.speed);
+    }
+
+    /// <summary>
+    /// すべてのUpdate処理が回った後に処理される関数
+    /// </summary>
+    private void LateUpdate()
+    {
+        _Agent.transform.position = _ModelObject.transform.position;
+        _Agent.transform.eulerAngles = _ModelObject.transform.eulerAngles;
+        _Agent.nextPosition = _ModelObject.transform.position;
+    }
+
+    /// <summary>
+    /// 復帰処理
+    /// </summary>
+    private void SetEnemyReturn()
+    {
+        // アニメーションを再生させる
+        _ModelAnimatorController.SetChangeAnimator("WalkAndRunBlendTree");
+        // ラグドール化を解除する
+        if (_MyCharacterBundledProcessManager != null)
+        {
+            _MyCharacterBundledProcessManager._RagdollController._IsRagdoll = false;
+        }
+
+        // 座標を初期位置にする
+        if (_InitialPosObject != null)
+        {
+            // オブジェクト指定だった場合、そちらの座標を取得する
+            _InitialPosVector3 = _InitialPosObject.transform.position;
+            _InitialRotVector3 = _InitialPosObject.transform.rotation.eulerAngles;
+        }
 
         // ナビメッシュの移動をメインのオブジェクトに反映させる
         if (_Rigidbody != null)
         {
-            // 物理演算を含めた移動
-            _Rigidbody.MovePosition(_Agent.transform.position);
-        }
-        else
-        {
-            // 座標を直接変更
-            _ModelObject.transform.position = _Agent.transform.position;
+            _Rigidbody.isKinematic = true;
+            _Rigidbody.velocity = Vector3.zero;
+            _Rigidbody.MovePosition(_InitialPosVector3);
         }
 
-        // スピードからアニメーションのブレンド率を決める
-        _ModelAnimatorController.SetMotionBlendValue("Speed", _Agent.velocity.magnitude / _Agent.speed);
+        _ModelObject.transform.position = _InitialPosVector3;
+        _ModelObject.transform.eulerAngles = _InitialRotVector3;
+
+        _Agent.transform.position = _InitialPosVector3;
+        _Agent.transform.eulerAngles = _InitialRotVector3;
+
+        _Agent.SetDestination(_InitialPosVector3);
+        _Agent.nextPosition = _InitialPosVector3;
+        _Agent.Warp(_InitialPosVector3);
+
+        // 体力を回復させる
+        if (_MyCharacterBundledProcessManager != null)
+        {
+            _MyCharacterBundledProcessManager._CharacterStatusManager._HP = _MyCharacterBundledProcessManager._CharacterStatusManager._Max_HP;
+        }
+
+        // 初期位置に戻っているかどうか
+        _IsReturnToInitialPosition = false;
+        // 自動で移動を止めるようにする
+        _Agent.autoBraking = true;
+
+        if(_Rigidbody != null)
+        {
+            _Rigidbody.isKinematic = false;
+        }
     }
 }
